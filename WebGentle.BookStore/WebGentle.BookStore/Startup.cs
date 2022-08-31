@@ -26,13 +26,33 @@ namespace WebGentle.BookStore
                 app.UseDeveloperExceptionPage();
             }
 
+           // app.Use(async (context, next) =>
+           //{
+           //    await context.Response.WriteAsync("Hello From My First Middleware \n");
+           //    await next();
+           //    await context.Response.WriteAsync("Hello From My First Middleware Response \n");
+           //});
+
+           // app.Use(async (context, next) =>
+           // {
+           //     await context.Response.WriteAsync("Hello From My Second Middleware \n");
+           //     await next();
+           //     await context.Response.WriteAsync("Hello From My Second Middleware Response \n");
+           // });
+
+           // app.Use(async (context, next) =>
+           // {
+           //     await context.Response.WriteAsync("Hello From My Third Middleware \n");
+           //     await next();
+           // });
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGet("/", async context =>
+                endpoints.Map("/", async context =>
                 {
-                    await context.Response.WriteAsync("Hello World!");
+                    await context.Response.WriteAsync("Hello World! \n");
                 });
             });
         }
