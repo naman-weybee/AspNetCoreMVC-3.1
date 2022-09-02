@@ -8,9 +8,20 @@ namespace WebGentle.BookStore.Controllers
 {
     public class HomeController : Controller
     {
-        public string Index()
+        public ViewResult Index()
         {
-            return "WebGentle";
+            //var obj = new { Id = 1, name = "naman" };
+            //return View("~/TempView/MyTempView.cshtml");
+            //return View("../../TempView/MyTempView");
+            return View();
+        }
+        public ViewResult AboutUs()
+        {
+            return View();
+        }
+        public ViewResult ContactUs()
+        {
+            return View();
         }
     }
 }
