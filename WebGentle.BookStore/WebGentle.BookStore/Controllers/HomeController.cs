@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Dynamic;
+using WebGentle.BookStore.Models;
 
 namespace WebGentle.BookStore.Controllers
 {
@@ -10,9 +12,6 @@ namespace WebGentle.BookStore.Controllers
     {
         public ViewResult Index()
         {
-            //var obj = new { Id = 1, name = "naman" };
-            //return View("~/TempView/MyTempView.cshtml");
-            //return View("../../TempView/MyTempView");
             return View();
         }
         public ViewResult AboutUs()
