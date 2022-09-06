@@ -1,36 +1,75 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebGentle.BookStore.Data;
 using WebGentle.BookStore.Models;
 
 namespace WebGentle.BookStore.Repository
 {
     public class BookRepository
     {
-        public List<BookModel> GetAllBooks()
+        private readonly BookStoreContext _context = null;
+
+        public BookRepository(BookStoreContext context)
         {
-            return DataSource();
+            _context = context;
         }
-        public BookModel GetBookById(int id)
+
+        public async Task<int> AddNewBook(BookModel model)
         {
-            return DataSource().Where(x => x.Id == id).FirstOrDefault();
+            var newBook = new Books()
+            {
+                Title = model.Title,
+                Description = model.Description,
+                Author = model.Author,
+                LanguageId = model.LanguageId,
+                TotalPages = model.TotalPages ?? 0,
+                CreatedOn = DateTime.UtcNow,
+                UpdatedOn = DateTime.UtcNow
+            };
+
+            await _context.Books.AddAsync(newBook);
+            await _context.SaveChangesAsync();
+
+            return newBook.Id;
+        }
+
+        public async Task<List<BookModel>> GetAllBooks()
+        {
+            return await _context.Books
+                  .Select(book => new BookModel()
+                  {
+                      Id = book.Id,
+                      Title = book.Title,
+                      Author = book.Author,
+                      Description = book.Description,
+                      LanguageId = book.LanguageId,
+                      Language = book.Language.Name,
+                      Category = book.Category,
+                      TotalPages = book.TotalPages,
+                  }).ToListAsync();
+        }
+
+        public async Task<BookModel> GetBookById(int id)
+        {
+            return await _context.Books.Where(x => x.Id == id)
+                .Select(book => new BookModel()
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Author = book.Author,
+                    Description = book.Description,
+                    LanguageId = book.LanguageId,
+                    Language = book.Language.Name,
+                    Category = book.Category,
+                    TotalPages = book.TotalPages
+                }).FirstOrDefaultAsync();
         }
         public List<BookModel> SearchBook(string title, string authorName)
         {
-            return DataSource().Where(x => x.Title.Contains(title) || x.Author.Contains(authorName)).ToList();
-        }
-        private List<BookModel> DataSource()
-        {
-            return new List<BookModel>()
-            {
-                new BookModel(){Id = 1, Title = "JavaScript", Author = "Shivraj", Discription = "This is the Discription of JavaScript book", Category = "Concept", Language = "English", TotalPages = 137},
-                new BookModel(){Id = 2, Title = "React JS", Author = "Darshan", Discription = "This is the Discription of React JS book", Category = "Concept", Language = "English", TotalPages = 121},
-                new BookModel(){Id = 3, Title = "Angular", Author = "Himanshu", Discription = "This is the Discription of Anguler book", Category = "Developer", Language = "Chinese", TotalPages = 352},
-                new BookModel(){Id = 4, Title = "C#", Author = "Naman", Discription = "This is the Discription of C# book", Category = "Developer", Language = "English", TotalPages = 756},
-                new BookModel(){Id = 5, Title = "ASP.Net Web Forms", Author = "Yash", Discription = "This is the Discription of ASP.Net Web Forms book", Category = "Framework", Language = "German", TotalPages = 897},
-                new BookModel(){Id = 6, Title = "ASP.NET Core MVC", Author = "Rishit", Discription = "This is the Discription of ASP.NET Core MVC book", Category = "Framework", Language = "English", TotalPages = 991},
-            };
+            return null;
         }
     }
 }
