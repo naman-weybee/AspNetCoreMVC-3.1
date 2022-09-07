@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using WebGentle.BookStore.Enums;
 using WebGentle.BookStore.Data;
+using WebGentle.BookStore.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace WebGentle.BookStore.Models
 {
@@ -23,6 +25,7 @@ namespace WebGentle.BookStore.Models
         public string Description { get; set; }
         public string Category { get; set; }
 
+        [Display(Name = "Language")]
         [Required(ErrorMessage = "Please Choose Language of the book")]
         public int LanguageId { get; set; }
 
@@ -31,5 +34,21 @@ namespace WebGentle.BookStore.Models
         [Display(Name = "Total Pages")]
         [Required(ErrorMessage = "Please Enter Total Pages of the book")]
         public int? TotalPages { get; set; }
+
+        [Display(Name = "Choose Cover Photo of book")]
+        [Required(ErrorMessage = "Please Choose Cover Photo of book")]
+        public IFormFile CoverPhoto { get; set; }
+        public string CoverImageUrl { get; set; }
+
+        [Display(Name = "Choose Gallery Images of book")]
+        [Required(ErrorMessage = "Please Choose Gallery Images of book")]
+        public IFormFileCollection GallaryFiles { get; set; }
+
+        public List<GalleryModel> Gallery { get; set; }
+
+        [Display(Name = "Upload book in pdf format")]
+        [Required(ErrorMessage = "Upload book in pdf format")]
+        public IFormFile BookPdf { get; set; }
+        public string BookPdfUrl { get; set; }
     }
 }
