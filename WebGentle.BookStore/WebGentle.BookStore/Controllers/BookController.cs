@@ -14,11 +14,11 @@ namespace WebGentle.BookStore.Controllers
 {
     public class BookController : Controller
     {
-        private readonly BookRepository _bookRepository = null;
-        private readonly LanguageRepository _languageRepository = null;
+        private readonly IBookRepository _bookRepository = null;
+        private readonly ILanguageRepository _languageRepository = null;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BookController(BookRepository bookRepository, LanguageRepository languageRepository, IWebHostEnvironment webHostEnvironment)
+        public BookController(IBookRepository bookRepository, ILanguageRepository languageRepository, IWebHostEnvironment webHostEnvironment)
         {
             _bookRepository = bookRepository;
             _languageRepository = languageRepository;
@@ -42,8 +42,6 @@ namespace WebGentle.BookStore.Controllers
 
         public async Task<ViewResult> AddNewBook(bool isSuccess = false, int bookId = 0)
         {
-            ViewBag.Language = new SelectList(await _languageRepository.GetLanguages(), "Id", "Name");
-
             ViewBag.IsSuccess = isSuccess;
             ViewBag.BookId = bookId;
             return View();
@@ -88,8 +86,6 @@ namespace WebGentle.BookStore.Controllers
                     return RedirectToAction(nameof(AddNewBook), new { isSuccess = true, bookId = id });
                 }
             }
-
-            ViewBag.Language = new SelectList(await _languageRepository.GetLanguages(), "Id", "Name");
             return View();
         }
 

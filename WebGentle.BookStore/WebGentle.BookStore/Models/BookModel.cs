@@ -24,7 +24,7 @@ namespace WebGentle.BookStore.Models
         [StringLength(500, MinimumLength = 30, ErrorMessage = "Length of Description should be in the range of 30 to 500 characters")]
         public string Description { get; set; }
         public string Category { get; set; }
-
+        
         [Display(Name = "Language")]
         [Required(ErrorMessage = "Please Choose Language of the book")]
         public int LanguageId { get; set; }
@@ -47,7 +47,7 @@ namespace WebGentle.BookStore.Models
         public List<GalleryModel> Gallery { get; set; }
 
         [Display(Name = "Upload book in pdf format")]
-        [Required(ErrorMessage = "Upload book in pdf format")]
+        [Required(ErrorMessage = "Please Upload book in pdf format")]
         public IFormFile BookPdf { get; set; }
         public string BookPdfUrl { get; set; }
     }

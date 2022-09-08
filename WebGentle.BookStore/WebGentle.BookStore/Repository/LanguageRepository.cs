@@ -8,7 +8,7 @@ using WebGentle.BookStore.Models;
 
 namespace WebGentle.BookStore.Repository
 {
-    public class LanguageRepository
+    public class LanguageRepository : ILanguageRepository
     {
         private readonly BookStoreContext _context = null;
 

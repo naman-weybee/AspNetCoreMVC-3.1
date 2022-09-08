@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,15 @@ using WebGentle.BookStore.Models;
 
 namespace WebGentle.BookStore.Repository
 {
-    public class BookRepository
+    public class BookRepository : IBookRepository
     {
         private readonly BookStoreContext _context = null;
+        private readonly IConfiguration _configuration;
 
-        public BookRepository(BookStoreContext context)
+        public BookRepository(BookStoreContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<int> AddNewBook(BookModel model)
@@ -66,6 +69,23 @@ namespace WebGentle.BookStore.Repository
                   }).ToListAsync();
         }
 
+        public async Task<List<BookModel>> GetTopBooksAsync(int count)
+        {
+            return await _context.Books
+                  .Select(book => new BookModel()
+                  {
+                      Id = book.Id,
+                      Title = book.Title,
+                      Author = book.Author,
+                      Description = book.Description,
+                      LanguageId = book.LanguageId,
+                      Language = book.Language.Name,
+                      Category = book.Category,
+                      TotalPages = book.TotalPages,
+                      CoverImageUrl = book.CoverImageUrl
+                  }).Take(count).ToListAsync();
+        }
+
         public async Task<BookModel> GetBookById(int id)
         {
             return await _context.Books.Where(x => x.Id == id)
@@ -92,6 +112,11 @@ namespace WebGentle.BookStore.Repository
         public List<BookModel> SearchBook(string title, string authorName)
         {
             return null;
+        }
+
+        public string GetAppName()
+        {
+            return _configuration["AppName"];
         }
     }
 }
