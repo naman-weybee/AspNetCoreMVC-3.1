@@ -58,6 +58,9 @@ namespace WebGentle.BookStore.Migrations
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CoverImageUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -81,9 +84,29 @@ namespace WebGentle.BookStore.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CategoryId");
+
                     b.HasIndex("LanguageId");
 
                     b.ToTable("Books");
+                });
+
+            modelBuilder.Entity("WebGentle.BookStore.Data.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category");
                 });
 
             modelBuilder.Entity("WebGentle.BookStore.Data.Language", b =>
@@ -115,6 +138,10 @@ namespace WebGentle.BookStore.Migrations
 
             modelBuilder.Entity("WebGentle.BookStore.Data.Books", b =>
                 {
+                    b.HasOne("WebGentle.BookStore.Data.Category", null)
+                        .WithMany("Books")
+                        .HasForeignKey("CategoryId");
+
                     b.HasOne("WebGentle.BookStore.Data.Language", "Language")
                         .WithMany("Books")
                         .HasForeignKey("LanguageId")
