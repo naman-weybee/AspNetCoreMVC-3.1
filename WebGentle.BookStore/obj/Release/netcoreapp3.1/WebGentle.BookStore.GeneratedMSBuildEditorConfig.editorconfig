@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = WebGentle.BookStore
+build_property.ProjectDir = D:\.NET\ASP.NET Core MVC\WebGentle App\WebGentle.BookStore\WebGentle.BookStore\
