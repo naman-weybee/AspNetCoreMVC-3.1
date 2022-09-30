@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,8 +13,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using WebGentle.BookStore.Data;
+using WebGentle.BookStore.Helpers;
 using WebGentle.BookStore.Models;
 using WebGentle.BookStore.Repository;
+using WebGentle.BookStore.Service;
 
 namespace WebGentle.BookStore
 {
@@ -32,6 +35,26 @@ namespace WebGentle.BookStore
         {
             services.AddDbContext<BookStoreContext>(options => options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<BookStoreContext>().AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 5;
+                options.Password.RequiredUniqueChars = 1;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+
+                options.SignIn.RequireConfirmedEmail = true;
+            });
+
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = _configuration["Application:LoginPath"];
+            });
+
             services.AddControllersWithViews();
 #if DEBUG
             services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -45,9 +68,17 @@ namespace WebGentle.BookStore
             services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<ILanguageRepository, LanguageRepository>();
             services.AddSingleton<IMessageRepository, MessageRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
 
-            services.Configure<NewBookAlertConfig>("InternalBook",_configuration.GetSection("NewBookAlert"));
-            services.Configure<NewBookAlertConfig>("ThirdPartyBook",_configuration.GetSection("ThirdPartyBook"));
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IEmailService, EmailService>();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
+
+            services.Configure<SMTPConfigModel>(_configuration.GetSection("SMTPConfig"));
+
+            services.Configure<NewBookAlertConfig>("InternalBook", _configuration.GetSection("NewBookAlert"));
+            services.Configure<NewBookAlertConfig>("ThirdPartyBook", _configuration.GetSection("ThirdPartyBook"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +92,10 @@ namespace WebGentle.BookStore
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
